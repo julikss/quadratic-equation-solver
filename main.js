@@ -8,14 +8,14 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
-const coef = [];
+let coef;
 
 rl.question('Choose mode: for interactice press "0", for file mode - "1"...\n', num => {
     if (num === '0') interactiveMode();
     else if (num === '1') fileMode();
     else {
         console.log('You entered invalid number!');
-        rl.close();
+        process.exit(1);
     }
 })
 
@@ -30,15 +30,24 @@ const fileMode = () => {
          fileName => {
              if (fs.existsSync(fileName)) {
                 const data = fs.readFileSync(fileName, 'utf8');
-                const example = /-*^[1-9]\d+[.\d+]* -*\d+[.\d+]* -*\d+[.\d+]*/;
-                if(example.test(data)) {
-                    const sortedData = data.split(' ');
-                    for(const el of sortedData) {
-                        coef.push(parseFloat(el));
-                    };
-                    solver(coef);
-                } else console.log('incorrect data')
-             }
+                const strData = data.split(' ');
+                const coef = strData.map(parseFloat);
+
+                for (const el of coef) {
+                    if (coef[0] === 0) {
+                        console.log('Error! a cannot be 0!');
+                        process.exit(1);
+                    } else if (isNaN(el)) {
+                        console.log(`Wrong type. Expected a valid real number, got ${el} instead`);
+                        process.exit(1);
+                    }
+                }
+                solver(coef);
+
+            } else {
+                console.log(`File ${fileName} doesn't exist or has invalid format`);
+                process.exit(1);
+            }
          })
 }
 
@@ -93,4 +102,5 @@ const solver = ([...args]) => {
         x2 = (-b - Math.sqrt(d))/(2*a);
         console.log(`There are two roots:\nx1 = ${x1}\nx2 = ${x2}`)
     }
+    process.exit(1);
 }
