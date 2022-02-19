@@ -8,7 +8,7 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
-let coef;
+const coeff = [];
 
 rl.question('Choose mode: for interactice press "0", for file mode - "1"...\n', num => {
     if (num === '0') interactiveMode();
@@ -64,19 +64,20 @@ const askFunc = () => {
 }
 
 const checkInput = arg => {
+    
     if (isNaN(arg)) {
         console.log(`Error. Expected a valid real number, got ${arg} instead`);
-    } else if (arg === '0' && coef.length === 0) {
+    } else if (arg === '0' && coeff.length === 0) {
         console.log('Error! a cannot be 0!');
         askFunc();
     } else {
         arg = +arg;
-        coef.push(arg);
+        coeff.push(arg);
     }
 
-    if (coef.length === 3) {
+    if (coeff.length === 3) {
         rl.close();
-        solver(coef);
+        solver(coeff);
     }
 }
 const solver = ([...args]) => {
